@@ -10,41 +10,35 @@ def load_resources():
 
 # Main Streamlit app
 def main():
-    st.title("Healthcare Resources Finder in KRG")
-    st.write("Find hospitals, clinics, and pharmacies available for refugees in the Kurdistan Region of Iraq.")
+    st.title("Healthcare Resources Finder in Erbil")
+    st.write("Find hospitals, clinics, and pharmacies in Erbil available for refugees and residents.")
 
     # Load data
     df = load_resources()
 
-    # Filter for healthcare-related resources (hospitals, clinics, pharmacies)
+    # Filter for healthcare-related resources (hospitals, clinics, pharmacies) in Erbil
     healthcare_types = ["Hospital", "Clinic", "Pharmacy"]
-    healthcare_df = df[df['type'].isin(healthcare_types)]
+    erbil_df = df[(df['location'] == 'Erbil') & (df['type'].isin(healthcare_types))]
 
-    # Sidebar filter for location
-    st.sidebar.header("Filter Resources by Location")
-    location = st.sidebar.selectbox("Select Location", healthcare_df['location'].unique())
-    
-    filtered_df = healthcare_df[healthcare_df['location'] == location]
-
-    if filtered_df.empty:
-        st.write("No healthcare resources found in the selected location.")
+    if erbil_df.empty:
+        st.write("No healthcare resources found in Erbil.")
     else:
-        st.write(f"### Healthcare Resources in {location}")
-        st.write(filtered_df[['name', 'contact', 'services']])
+        st.write(f"### Healthcare Resources in Erbil")
+        st.write(erbil_df[['name', 'contact', 'services']])
 
         # Display the map with healthcare resource locations
         st.write("### Healthcare Locations on Map")
-        healthcare_resources = filtered_df[['latitude', 'longitude', 'name']]
+        healthcare_resources = erbil_df[['latitude', 'longitude', 'name']]
         st.map(healthcare_resources)
 
     # Option to display all healthcare resources
-    if st.sidebar.button("Show All Healthcare Resources"):
-        st.write("### All Healthcare Resources")
-        st.write(healthcare_df[['name', 'type', 'location', 'contact', 'services']])
+    if st.button("Show All Healthcare Resources in Erbil"):
+        st.write("### All Healthcare Resources in Erbil")
+        st.write(erbil_df[['name', 'type', 'location', 'contact', 'services']])
 
-        # Display the map with all healthcare resources
+        # Display the map with all healthcare resources in Erbil
         st.write("### All Healthcare Resource Locations on Map")
-        all_healthcare = healthcare_df[['latitude', 'longitude', 'name']]
+        all_healthcare = erbil_df[['latitude', 'longitude', 'name']]
         st.map(all_healthcare)
 
 if __name__ == "__main__":
