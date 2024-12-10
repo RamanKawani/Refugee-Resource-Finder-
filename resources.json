@@ -1,29 +1,56 @@
 [
   {
-    "name": "Medical Center A",
-    "type": "Healthcare",
+    "name": "General Hospital A",
+    "type": "Hospital",
     "location": "Erbil",
     "contact": "+964XXXXXXXXX",
-    "services": ["Free Healthcare", "Emergency Care", "Mental Health Support"],
+    "services": ["Emergency Care", "Surgical Assistance", "Inpatient Care"],
     "latitude": 36.1911,
     "longitude": 44.0097
   },
   {
-    "name": "Shelter B",
-    "type": "Accommodation",
+    "name": "Primary Healthcare Clinic B",
+    "type": "Clinic",
     "location": "Sulaymaniyah",
     "contact": "+964XXXXXXXXX",
-    "services": ["Emergency Shelter", "Food Distribution", "Legal Aid"],
+    "services": ["Primary Healthcare", "Vaccination", "Maternal Care"],
     "latitude": 35.5661,
     "longitude": 45.4344
   },
   {
-    "name": "Education Center C",
-    "type": "Education",
+    "name": "Pharmacy C",
+    "type": "Pharmacy",
     "location": "Duhok",
     "contact": "+964XXXXXXXXX",
-    "services": ["Language Classes", "Child Education", "Vocational Training"],
+    "services": ["Prescription Medications", "Over-the-Counter Drugs", "Medical Advice"],
     "latitude": 36.8678,
     "longitude": 42.9983
+  },
+  {
+    "name": "Emergency Hospital D",
+    "type": "Hospital",
+    "location": "Erbil",
+    "contact": "+964XXXXXXXXX",
+    "services": ["24/7 Emergency Care", "Trauma Surgery", "Critical Care"],
+    "latitude": 36.1915,
+    "longitude": 44.0110
+  },
+  {
+    "name": "Community Health Clinic E",
+    "type": "Clinic",
+    "location": "Sulaymaniyah",
+    "contact": "+964XXXXXXXXX",
+    "services": ["Health Checkups", "Nutrition Support", "Emergency Response"],
+    "latitude": 35.5670,
+    "longitude": 45.4320
+  },
+  {
+    "name": "Pharmacy F",
+    "type": "Pharmacy",
+    "location": "Duhok",
+    "contact": "+964XXXXXXXXX",
+    "services": ["Prescription Filling", "First Aid Supplies", "Health Consultation"],
+    "latitude": 36.8690,
+    "longitude": 43.0000
   }
 ]
