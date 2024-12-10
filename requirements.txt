@@ -1,2 +1,2 @@
-flask==2.x.x
-psutil==5.x.x
+flask==2.3.3
+psutil
