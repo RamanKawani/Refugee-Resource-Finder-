@@ -1,0 +1,89 @@
+import streamlit as st
+import pandas as pd
+import json
+
+# Define a base class for Resources
+class Resource:
+    def __init__(self, name, resource_type, location, contact, services, latitude, longitude):
+        self.name = name
+        self.resource_type = resource_type
+        self.location = location
+        self.contact = contact
+        self.services = services
+        self.latitude = latitude
+        self.longitude = longitude
+
+# Define specialized classes for each resource type
+class HealthcareResource(Resource):
+    def __init__(self, name, location, contact, services, latitude, longitude):
+        super().__init__(name, "Healthcare", location, contact, services, latitude, longitude)
+
+class AccommodationResource(Resource):
+    def __init__(self, name, location, contact, services, latitude, longitude):
+        super().__init__(name, "Accommodation", location, contact, services, latitude, longitude)
+
+class EducationResource(Resource):
+    def __init__(self, name, location, contact, services, latitude, longitude):
+        super().__init__(name, "Education", location, contact, services, latitude, longitude)
+
+# Sample data (you can load this from a JSON or other sources)
+resources = [
+    HealthcareResource("Medical Center A", "Erbil", "+964XXXXXXXXX", ["Free Healthcare", "Emergency Care", "Mental Health Support"], 36.1911, 44.0097),
+    HealthcareResource("General Hospital B", "Sulaymaniyah", "+964XXXXXXXXX", ["Emergency Services", "Surgical Assistance", "Inpatient Care"], 35.5661, 45.4344),
+    AccommodationResource("Shelter A", "Erbil", "+964XXXXXXXXX", ["Emergency Shelter", "Food Distribution"], 36.1915, 44.0110),
+    EducationResource("Education Center C", "Duhok", "+964XXXXXXXXX", ["Language Classes", "Vocational Training"], 36.8678, 42.9983)
+]
+
+# Convert resources to DataFrame for easy filtering
+def resources_to_dataframe(resources):
+    data = []
+    for resource in resources:
+        data.append({
+            "name": resource.name,
+            "type": resource.resource_type,
+            "location": resource.location,
+            "contact": resource.contact,
+            "services": resource.services,
+            "latitude": resource.latitude,
+            "longitude": resource.longitude
+        })
+    return pd.DataFrame(data)
+
+# Main Streamlit app
+def main():
+    st.title("Refugee Resource Finder in KRG")
+    st.write("Find the available resources for refugees in the Kurdistan Region of Iraq.")
+
+    # Load data
+    df = resources_to_dataframe(resources)
+
+    # Sidebar: Filters for resource type, location, or service
+    st.sidebar.header("Filter Resources")
+    resource_type = st.sidebar.selectbox("Resource Type", df['type'].unique())
+    location = st.sidebar.selectbox("Location", df['location'].unique())
+
+    filtered_df = df[(df['type'] == resource_type) & (df['location'] == location)]
+
+    if filtered_df.empty:
+        st.write("No resources found based on the filters applied.")
+    else:
+        st.write(f"### Available Resources in {location}")
+        st.write(filtered_df[['name', 'contact', 'services']])
+
+        # Display the map with the filtered resources
+        st.write("### Resource Locations on Map")
+        filtered_resources = filtered_df[['latitude', 'longitude', 'name']]
+        st.map(filtered_resources)
+
+    # Option to display all resources
+    if st.sidebar.button("Show All Resources"):
+        st.write("### All Resources")
+        st.write(df[['name', 'type', 'location', 'contact', 'services']])
+
+        # Display the map with all resources
+        st.write("### All Resource Locations on Map")
+        all_resources = df[['latitude', 'longitude', 'name']]
+        st.map(all_resources)
+
+if __name__ == "__main__":
+    main()
