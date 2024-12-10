@@ -1,34 +1,39 @@
-mport os
+import os
 import signal
 import subprocess
-from flask import Flask
-from waitress import serve
+import sys
+import time
 
-def kill_port_5000():
-    """Find and kill the process using port 5000."""
+def kill_process_using_port(port):
     try:
-        # Find the process ID using the port 5000
-        result = subprocess.run(['lsof', '-t', '-i', ':5000'], stdout=subprocess.PIPE)
-        pid = result.stdout.decode().strip()
-        if pid:
-            print(f"Terminating process using port 5000, PID: {pid}")
-            os.kill(int(pid), signal.SIGKILL)
-        else:
-            print("No process found using port 5000.")
-    except Exception as e:
-        print(f"Error while killing the process: {e}")
+        # Check and kill the process using the port
+        pid = subprocess.check_output(["fuser", f"{port}/tcp", "-k"])
+        print(f"Process using port {port} has been killed.")
+    except subprocess.CalledProcessError:
+        print(f"No process found using port {port}.")
 
-# Initialize the Flask app
-app = Flask(__name__)
-
-@app.route('/')
-def home():
-    return "Hello, World!"
+def restart_flask_app():
+    print("Restarting Flask app...")
+    os.execv(sys.executable, ['python'] + sys.argv)
 
 if __name__ == "__main__":
-    # Kill any process occupying port 5000
-    kill_port_5000()
+    port = 5000  # Flask app port
 
-    # Start the Flask app using Waitress
-    print("Starting Flask app...")
-    serve(app, host='0.0.0.0', port=5000)
+    # Check if the port is being used
+    try:
+        print("Checking if port 5000 is in use...")
+        kill_process_using_port(port)
+
+        # Import and run the Flask app from flask_app.py
+        print("Starting Flask app...")
+        from flask_app import start_flask_app
+        start_flask_app()
+
+    except OSError as e:
+        if e.errno == 98:  # Address already in use
+            print(f"Port {port} is already in use, attempting to kill the process.")
+            kill_process_using_port(port)
+            time.sleep(1)  # Give time for the process to terminate
+            restart_flask_app()
+        else:
+            raise
