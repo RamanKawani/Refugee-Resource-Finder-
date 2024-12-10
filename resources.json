@@ -4,20 +4,26 @@
     "type": "Healthcare",
     "location": "Erbil",
     "contact": "+964XXXXXXXXX",
-    "services": ["Free Healthcare", "Emergency Care", "Mental Health Support"]
+    "services": ["Free Healthcare", "Emergency Care", "Mental Health Support"],
+    "latitude": 36.1911,
+    "longitude": 44.0097
   },
   {
     "name": "Shelter B",
     "type": "Accommodation",
     "location": "Sulaymaniyah",
     "contact": "+964XXXXXXXXX",
-    "services": ["Emergency Shelter", "Food Distribution", "Legal Aid"]
+    "services": ["Emergency Shelter", "Food Distribution", "Legal Aid"],
+    "latitude": 35.5661,
+    "longitude": 45.4344
   },
   {
     "name": "Education Center C",
     "type": "Education",
     "location": "Duhok",
     "contact": "+964XXXXXXXXX",
-    "services": ["Language Classes", "Child Education", "Vocational Training"]
+    "services": ["Language Classes", "Child Education", "Vocational Training"],
+    "latitude": 36.8678,
+    "longitude": 42.9983
   }
 ]
