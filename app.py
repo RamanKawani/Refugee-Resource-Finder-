@@ -3,34 +3,25 @@ import signal
 import subprocess
 import sys
 import time
+import psutil
 
 def kill_process_using_port(port):
     try:
-        # Try to find processes using 'lsof' (Linux/macOS) or 'netstat' (Windows)
+        # Try to find processes using psutil (cross-platform)
         print(f"Checking if port {port} is in use...")
         
-        # Using lsof command to find processes (works on Linux/macOS)
-        result = subprocess.run(['lsof', '-t', f'-i:{port}'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        # Loop through all processes and check for port usage
+        for proc in psutil.process_iter(['pid', 'connections']):
+            for conn in proc.info['connections']:
+                if conn.status == 'LISTEN' and conn.laddr.port == port:
+                    print(f"Process {proc.info['pid']} is using port {port}. Terminating...")
+                    proc.terminate()  # Try terminating the process
+                    proc.wait()  # Wait for termination
+                    print(f"Process {proc.info['pid']} terminated.")
+                    return
+        
+        print(f"No process found using port {port}.")
 
-        # If 'lsof' fails, try 'netstat' (works on Windows)
-        if result.returncode != 0:
-            print(f"'lsof' failed. Trying 'netstat' for port {port}...")
-            result = subprocess.run(['netstat', '-ano'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-
-        if result.returncode == 0:
-            process_ids = result.stdout.decode().strip().splitlines()
-            for pid in process_ids:
-                pid = pid.strip()
-                if pid:
-                    print(f"Killing process with PID {pid} on port {port}")
-                    # Kill the process using the pid
-                    subprocess.run(['kill', '-9', pid], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-                    print(f"Process {pid} terminated.")
-                else:
-                    print(f"No process found using port {port}.")
-        else:
-            print(f"Could not determine process using port {port}.")
-    
     except Exception as e:
         print(f"Error occurred while trying to kill the process: {str(e)}")
 
