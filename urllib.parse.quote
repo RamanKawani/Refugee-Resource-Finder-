@@ -1,0 +1,4 @@
+from urllib.parse import quote
+
+# Replace all occurrences of url_quote with quote
+safe_url = quote("your_string_to_quote")
