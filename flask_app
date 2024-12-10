@@ -1,9 +1,20 @@
+from flask import Flask, Blueprint, render_template
 
----
+# Create the Flask app instance
+app = Flask(__name__)
 
-### 6. **Run the Project**
+# Define views directly in this script
+# Create a Blueprint for organizing routes
+main_view = Blueprint('main', __name__)
 
-1. Install dependencies from the `requirements.txt`:
+# Define a route within the Blueprint
+@main_view.route('/')
+def home():
+    return "Hello, World!"
 
-```bash
-pip install -r requirements.txt
+# Register the Blueprint with the Flask app
+app.register_blueprint(main_view)
+
+# Run the app
+if __name__ == '__main__':
+    app.run(debug=True)
