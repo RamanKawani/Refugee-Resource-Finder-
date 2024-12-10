@@ -11,20 +11,20 @@
   {
     "name": "Primary Healthcare Clinic B",
     "type": "Clinic",
-    "location": "Sulaymaniyah",
+    "location": "Erbil",
     "contact": "+964XXXXXXXXX",
     "services": ["Primary Healthcare", "Vaccination", "Maternal Care"],
-    "latitude": 35.5661,
-    "longitude": 45.4344
+    "latitude": 36.1920,
+    "longitude": 44.0105
   },
   {
     "name": "Pharmacy C",
     "type": "Pharmacy",
-    "location": "Duhok",
+    "location": "Erbil",
     "contact": "+964XXXXXXXXX",
     "services": ["Prescription Medications", "Over-the-Counter Drugs", "Medical Advice"],
-    "latitude": 36.8678,
-    "longitude": 42.9983
+    "latitude": 36.1900,
+    "longitude": 44.0120
   },
   {
     "name": "Emergency Hospital D",
@@ -32,25 +32,7 @@
     "location": "Erbil",
     "contact": "+964XXXXXXXXX",
     "services": ["24/7 Emergency Care", "Trauma Surgery", "Critical Care"],
-    "latitude": 36.1915,
-    "longitude": 44.0110
-  },
-  {
-    "name": "Community Health Clinic E",
-    "type": "Clinic",
-    "location": "Sulaymaniyah",
-    "contact": "+964XXXXXXXXX",
-    "services": ["Health Checkups", "Nutrition Support", "Emergency Response"],
-    "latitude": 35.5670,
-    "longitude": 45.4320
-  },
-  {
-    "name": "Pharmacy F",
-    "type": "Pharmacy",
-    "location": "Duhok",
-    "contact": "+964XXXXXXXXX",
-    "services": ["Prescription Filling", "First Aid Supplies", "Health Consultation"],
-    "latitude": 36.8690,
-    "longitude": 43.0000
+    "latitude": 36.1905,
+    "longitude": 44.0085
   }
 ]
