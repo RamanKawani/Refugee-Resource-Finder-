@@ -3,14 +3,25 @@ import signal
 import subprocess
 import sys
 import time
+import psutil  # Import psutil to check for processes
 
 def kill_process_using_port(port):
     try:
-        # Check and kill the process using the port
-        pid = subprocess.check_output(["fuser", f"{port}/tcp", "-k"])
-        print(f"Process using port {port} has been killed.")
-    except subprocess.CalledProcessError:
+        # Check all running processes to find one that is using the port
+        for proc in psutil.process_iter(['pid', 'name', 'connections']):
+            for conn in proc.info['connections']:
+                if conn.laddr.port == port:
+                    print(f"Killing process {proc.info['name']} with PID {proc.info['pid']} on port {port}")
+                    proc.terminate()  # Terminate the process
+                    proc.wait()  # Wait for process termination
+                    return
         print(f"No process found using port {port}.")
+    except psutil.NoSuchProcess:
+        print(f"Error: Process not found while trying to kill on port {port}.")
+    except psutil.AccessDenied:
+        print(f"Error: Access denied while trying to terminate the process.")
+    except Exception as e:
+        print(f"Error occurred: {str(e)}")
 
 def restart_flask_app():
     print("Restarting Flask app...")
