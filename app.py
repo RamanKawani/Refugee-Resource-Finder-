@@ -3,25 +3,36 @@ import signal
 import subprocess
 import sys
 import time
-import psutil  # Import psutil to check for processes
 
 def kill_process_using_port(port):
     try:
-        # Check all running processes to find one that is using the port
-        for proc in psutil.process_iter(['pid', 'name', 'connections']):
-            for conn in proc.info['connections']:
-                if conn.laddr.port == port:
-                    print(f"Killing process {proc.info['name']} with PID {proc.info['pid']} on port {port}")
-                    proc.terminate()  # Terminate the process
-                    proc.wait()  # Wait for process termination
-                    return
-        print(f"No process found using port {port}.")
-    except psutil.NoSuchProcess:
-        print(f"Error: Process not found while trying to kill on port {port}.")
-    except psutil.AccessDenied:
-        print(f"Error: Access denied while trying to terminate the process.")
+        # Try to find processes using 'lsof' (Linux/macOS) or 'netstat' (Windows)
+        print(f"Checking if port {port} is in use...")
+        
+        # Using lsof command to find processes (works on Linux/macOS)
+        result = subprocess.run(['lsof', '-t', f'-i:{port}'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+        # If 'lsof' fails, try 'netstat' (works on Windows)
+        if result.returncode != 0:
+            print(f"'lsof' failed. Trying 'netstat' for port {port}...")
+            result = subprocess.run(['netstat', '-ano'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+        if result.returncode == 0:
+            process_ids = result.stdout.decode().strip().splitlines()
+            for pid in process_ids:
+                pid = pid.strip()
+                if pid:
+                    print(f"Killing process with PID {pid} on port {port}")
+                    # Kill the process using the pid
+                    subprocess.run(['kill', '-9', pid], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                    print(f"Process {pid} terminated.")
+                else:
+                    print(f"No process found using port {port}.")
+        else:
+            print(f"Could not determine process using port {port}.")
+    
     except Exception as e:
-        print(f"Error occurred: {str(e)}")
+        print(f"Error occurred while trying to kill the process: {str(e)}")
 
 def restart_flask_app():
     print("Restarting Flask app...")
