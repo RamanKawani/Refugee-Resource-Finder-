@@ -1,45 +1,66 @@
 import streamlit as st
+import googlemaps
 import pandas as pd
-import json
 
-# Load resources data from JSON
-def load_resources():
-    with open('resources.json', 'r') as f:
-        resources = json.load(f)
-    return pd.DataFrame(resources)
+# Initialize Google Maps API Client
+API_KEY = 'YOUR_GOOGLE_MAPS_API_KEY'  # Replace with your Google Maps API key
+gmaps = googlemaps.Client(key=API_KEY)
 
-# Main Streamlit app
+# Function to fetch places from Google Maps API
+def fetch_places(location, place_type, radius=5000):
+    """
+    Fetch places (like hospitals, clinics, pharmacies) near a location.
+    :param location: Tuple of latitude and longitude (lat, lng)
+    :param place_type: Type of place to search for (e.g., 'hospital', 'pharmacy', 'clinic')
+    :param radius: Search radius in meters (default is 5000 meters)
+    :return: A DataFrame with places' details
+    """
+    places = gmaps.places_nearby(location, radius=radius, type=place_type)
+    results = []
+
+    for place in places['results']:
+        name = place.get('name')
+        address = place.get('vicinity')
+        lat = place.get('geometry', {}).get('location', {}).get('lat')
+        lng = place.get('geometry', {}).get('location', {}).get('lng')
+        contact = place.get('formatted_phone_number', 'Not available')
+
+        results.append({
+            'name': name,
+            'address': address,
+            'contact': contact,
+            'latitude': lat,
+            'longitude': lng,
+            'type': place_type
+        })
+
+    return pd.DataFrame(results)
+
+# Streamlit App
 def main():
-    st.title("Healthcare Resources Finder in Erbil")
-    st.write("Find hospitals, clinics, and pharmacies in Erbil available for refugees and residents.")
+    st.title("Healthcare Places Finder in Erbil")
+    st.write("Find real places like hospitals, clinics, and pharmacies using Google Maps.")
 
-    # Load data
-    df = load_resources()
+    # Input location (latitude, longitude) for Erbil
+    location = (36.1911, 44.0097)  # Erbil's coordinates (change if necessary)
 
-    # Filter for healthcare-related resources (hospitals, clinics, pharmacies) in Erbil
-    healthcare_types = ["Hospital", "Clinic", "Pharmacy"]
-    erbil_df = df[(df['location'] == 'Erbil') & (df['type'].isin(healthcare_types))]
+    # Fetch Hospitals, Clinics, and Pharmacies from Google Maps API
+    hospital_df = fetch_places(location, 'hospital')
+    clinic_df = fetch_places(location, 'clinic')
+    pharmacy_df = fetch_places(location, 'pharmacy')
 
-    if erbil_df.empty:
-        st.write("No healthcare resources found in Erbil.")
+    # Combine all places into one DataFrame
+    all_places_df = pd.concat([hospital_df, clinic_df, pharmacy_df], ignore_index=True)
+
+    if all_places_df.empty:
+        st.write("No healthcare resources found.")
     else:
-        st.write(f"### Healthcare Resources in Erbil")
-        st.write(erbil_df[['name', 'contact', 'services']])
+        st.write("### Healthcare Places in Erbil")
+        st.write(all_places_df[['name', 'address', 'contact', 'type']])
 
-        # Display the map with healthcare resource locations
+        # Display the map with locations of all healthcare places
         st.write("### Healthcare Locations on Map")
-        healthcare_resources = erbil_df[['latitude', 'longitude', 'name']]
-        st.map(healthcare_resources)
-
-    # Option to display all healthcare resources
-    if st.button("Show All Healthcare Resources in Erbil"):
-        st.write("### All Healthcare Resources in Erbil")
-        st.write(erbil_df[['name', 'type', 'location', 'contact', 'services']])
-
-        # Display the map with all healthcare resources in Erbil
-        st.write("### All Healthcare Resource Locations on Map")
-        all_healthcare = erbil_df[['latitude', 'longitude', 'name']]
-        st.map(all_healthcare)
+        st.map(all_places_df[['latitude', 'longitude']])
 
 if __name__ == "__main__":
     main()
