@@ -10,3 +10,4 @@ def hello():
 def start_flask_app():
     # Start the Flask app using Waitress
     serve(app, host='0.0.0.0', port=5000)
+
