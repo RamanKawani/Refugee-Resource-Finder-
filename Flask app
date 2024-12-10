@@ -1,0 +1,11 @@
+import os
+from multiprocessing import Process
+from your_flask_app import create_app
+
+def run_flask():
+    app = create_app()
+    app.run(debug=False)
+
+if __name__ == "__main__":
+    flask_process = Process(target=run_flask)
+    flask_process.start()
