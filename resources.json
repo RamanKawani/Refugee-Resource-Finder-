@@ -1,0 +1,23 @@
+[
+  {
+    "name": "Medical Center A",
+    "type": "Healthcare",
+    "location": "Erbil",
+    "contact": "+964XXXXXXXXX",
+    "services": ["Free Healthcare", "Emergency Care", "Mental Health Support"]
+  },
+  {
+    "name": "Shelter B",
+    "type": "Accommodation",
+    "location": "Sulaymaniyah",
+    "contact": "+964XXXXXXXXX",
+    "services": ["Emergency Shelter", "Food Distribution", "Legal Aid"]
+  },
+  {
+    "name": "Education Center C",
+    "type": "Education",
+    "location": "Duhok",
+    "contact": "+964XXXXXXXXX",
+    "services": ["Language Classes", "Child Education", "Vocational Training"]
+  }
+]
