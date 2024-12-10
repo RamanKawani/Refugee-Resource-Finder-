@@ -1,8 +1,0 @@
-# Replace this import
-# from werkzeug.urls import url_quote
-
-# With this import
-from urllib.parse import quote
-
-# Use urllib.parse.quote instead of url_quote
-safe_url = quote("your_string_to_quote")
