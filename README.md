@@ -1,15 +1,12 @@
 # Refugee Resource Finder
 
-This is a web application that provides resources for refugees. It integrates a Flask API with a Streamlit frontend.
+This Flask app helps refugees find resources in their area.
 
-## Project Structure
+## Setup
 
-- `app.py`: Main entry point for the Streamlit app.
-- `flask_app/`: Contains the Flask app, including routes.
-- `requirements.txt`: Dependencies for the project.
+1. Clone the repository.
+2. Create a virtual environment and activate it.
+3. Install dependencies:
 
-## Getting Started
-
-1. Install dependencies:
    ```bash
    pip install -r requirements.txt
