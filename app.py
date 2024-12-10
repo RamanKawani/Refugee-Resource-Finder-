@@ -1,36 +1,40 @@
 import psutil
-import streamlit as st
+import os
+import signal
+import logging
 
-# Function to kill the process using the specified port
-def kill_process_using_port(port):
+# Set up logging to output useful information
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(message)s')
+
+def kill_process_using_port(port=5000):
     try:
-        for proc in psutil.process_iter(['pid', 'connections']):
+        logging.info(f"Checking for processes using port {port}...")
+
+        # Iterate over all processes and their open connections
+        for proc in psutil.process_iter(attrs=['pid', 'name', 'connections']):
             try:
-                # Check for connections that are using the specified port
-                for conn in proc.connections(kind='inet'):
-                    if conn.laddr.port == port:
+                for conn in proc.info['connections']:
+                    if conn.laddr.port == port:  # Check if this process is using the specified port
+                        logging.info(f"Process {proc.info['name']} (PID {proc.info['pid']}) is using port {port}. Terminating...")
                         proc.terminate()  # Terminate the process using the port
-                        st.write(f"Terminated process {proc.info['pid']} using port {port}")
-                        return
+                        proc.wait(timeout=3)  # Ensure the process is terminated
+                        logging.info(f"Process {proc.info['name']} (PID {proc.info['pid']}) has been terminated.")
+                        return  # Exit once the process has been killed
             except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
-                continue
+                continue  # Handle processes that have been closed or are inaccessible
+
+        logging.info(f"No process was found using port {port}.")
     except Exception as e:
-        st.write(f"Error: {e}")
+        logging.error(f"An error occurred: {e}")
 
-# Streamlit app logic
-def main():
-    # Show a title
-    st.title('Streamlit Port Killer')
+def start_streamlit_app():
+    try:
+        logging.info("Starting Streamlit app...")
+        os.system("streamlit run app.py")  # Command to run the Streamlit app
+    except Exception as e:
+        logging.error(f"Failed to start Streamlit app: {e}")
 
-    # Port to check and kill processes
-    port = 5000
-
-    # Try to kill the process using the port
-    kill_process_using_port(port)
-
-    # Display a message that the app is running
-    st.write(f"Streamlit app is running on port {port}")
-
-# Run the Streamlit app
 if __name__ == "__main__":
-    main()
+    port = 5000  # You can change this port number if needed
+    kill_process_using_port(port)
+    start_streamlit_app()
