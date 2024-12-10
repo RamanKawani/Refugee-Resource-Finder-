@@ -1,15 +1,26 @@
-import streamlit as st
-from waitress import serve
+# app.py
+
+import os
 from flask_app import create_app
+from dotenv import load_dotenv
+
+# Load environment variables from a .env file
+load_dotenv()
+
+# Set up the environment
+FLASK_ENV = os.getenv('FLASK_ENV', 'development')
 
 # Create the Flask app
 app = create_app()
 
-# Streamlit content
-st.title("Refugee Resource Finder")
+# Configure app settings based on the environment
+if FLASK_ENV == 'development':
+    app.config['DEBUG'] = True
+    app.config['ENV'] = 'development'
+else:
+    app.config['DEBUG'] = False
+    app.config['ENV'] = 'production'
 
-# Button to start the Flask app in the background
-if st.button("Start Flask App"):
-    # Serve Flask app using Waitress
-    serve(app, host="0.0.0.0", port=8080)
-    st.success("Flask app is running on port 8080!")
+# Running the app with additional features like logging
+if __name__ == '__main__':
+    app.run(debug=app.config['DEBUG'], host='0.0.0.0', port=int(os.getenv('FLASK_PORT', 5000)))
