@@ -1,0 +1,51 @@
+import streamlit as st
+import pandas as pd
+import json
+
+# Load resources data from JSON
+def load_resources():
+    with open('resources.json', 'r') as f:
+        resources = json.load(f)
+    return pd.DataFrame(resources)
+
+# Main Streamlit app
+def main():
+    st.title("Healthcare Resources Finder in KRG")
+    st.write("Find hospitals, clinics, and pharmacies available for refugees in the Kurdistan Region of Iraq.")
+
+    # Load data
+    df = load_resources()
+
+    # Filter for healthcare-related resources (hospitals, clinics, pharmacies)
+    healthcare_types = ["Hospital", "Clinic", "Pharmacy"]
+    healthcare_df = df[df['type'].isin(healthcare_types)]
+
+    # Sidebar filter for location
+    st.sidebar.header("Filter Resources by Location")
+    location = st.sidebar.selectbox("Select Location", healthcare_df['location'].unique())
+    
+    filtered_df = healthcare_df[healthcare_df['location'] == location]
+
+    if filtered_df.empty:
+        st.write("No healthcare resources found in the selected location.")
+    else:
+        st.write(f"### Healthcare Resources in {location}")
+        st.write(filtered_df[['name', 'contact', 'services']])
+
+        # Display the map with healthcare resource locations
+        st.write("### Healthcare Locations on Map")
+        healthcare_resources = filtered_df[['latitude', 'longitude', 'name']]
+        st.map(healthcare_resources)
+
+    # Option to display all healthcare resources
+    if st.sidebar.button("Show All Healthcare Resources"):
+        st.write("### All Healthcare Resources")
+        st.write(healthcare_df[['name', 'type', 'location', 'contact', 'services']])
+
+        # Display the map with all healthcare resources
+        st.write("### All Healthcare Resource Locations on Map")
+        all_healthcare = healthcare_df[['latitude', 'longitude', 'name']]
+        st.map(all_healthcare)
+
+if __name__ == "__main__":
+    main()
