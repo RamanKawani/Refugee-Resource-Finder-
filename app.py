@@ -1,35 +1,38 @@
-import psutil
-import os
-import signal
-import logging
+import streamlit as st
+import pandas as pd
+import json
 
-# Setup logging for better debugging
-logging.basicConfig(level=logging.INFO)
+# Load resources data from JSON
+def load_resources():
+    with open('resources.json', 'r') as f:
+        resources = json.load(f)
+    return pd.DataFrame(resources)
 
-# Function to check and kill the process using a specific port
-def kill_process_using_port(port):
-    logging.info(f"Checking for processes using port {port}...")
+# Main Streamlit app
+def main():
+    st.title("Refugee Resource Finder in KRG")
+    st.write("Find the available resources for refugees in the Kurdistan Region of Iraq.")
 
-    # Iterate over all running processes
-    for proc in psutil.process_iter(attrs=['pid', 'name']):
-        try:
-            # Check if the process has a connection to the specified port
-            for conn in proc.connections(kind='inet'):
-                if conn.laddr.port == port:
-                    logging.info(f"Found process {proc.info['name']} (PID: {proc.info['pid']}) using port {port}. Terminating...")
-                    proc.terminate()
-                    return
-        except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
-            pass
+    # Load data
+    df = load_resources()
 
-    logging.info(f"No process found using port {port}.")
+    # Sidebar: Filters for resource type, location, or service
+    st.sidebar.header("Filter Resources")
+    resource_type = st.sidebar.selectbox("Resource Type", df['type'].unique())
+    location = st.sidebar.selectbox("Location", df['location'].unique())
 
-# Function to start Flask app (or any server you're using)
-def start_flask_app():
-    logging.info("Starting Streamlit app...")
-    os.system("streamlit run app.py")
+    filtered_df = df[(df['type'] == resource_type) & (df['location'] == location)]
+
+    if filtered_df.empty:
+        st.write("No resources found based on the filters applied.")
+    else:
+        st.write(f"### Available Resources in {location} ({resource_type})")
+        st.write(filtered_df[['name', 'contact', 'services']])
+
+    # Option to display all resources
+    if st.sidebar.button("Show All Resources"):
+        st.write("### All Resources")
+        st.write(df[['name', 'type', 'location', 'contact', 'services']])
 
 if __name__ == "__main__":
-    port = 5000
-    kill_process_using_port(port)
-    start_flask_app()
+    main()
