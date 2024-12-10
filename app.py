@@ -1,27 +1,23 @@
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
-from flask_marshmallow import Marshmallow
-from flask_cors import CORS
-
-# Initialize Flask app
-app = Flask(__name__)
-
-# Load configurations
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///resources.db'  # Replace with your database URI
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
-# Enable CORS
-CORS(app)
-
-# Initialize extensions
-db = SQLAlchemy(app)
-ma = Marshmallow(app)
-
-# Import routes
+from extensions import db, ma
 from routes import init_routes
-init_routes(app)
 
-# Main entry point
+def create_app():
+    app = Flask(__name__)
+    
+    # Configure the app
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///refugees.db'
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+    # Initialize extensions
+    db.init_app(app)
+    ma.init_app(app)
+
+    # Initialize routes
+    init_routes(app)
+
+    return app
+
 if __name__ == '__main__':
-    db.create_all()  # Create tables (for development only)
+    app = create_app()
     app.run(debug=True)
