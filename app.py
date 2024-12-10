@@ -5,14 +5,11 @@ from flask_app import create_app
 # Create the Flask app
 app = create_app()
 
-# This function will run the Flask app using Waitress server
-def run_flask_app():
-    serve(app, host='0.0.0.0', port=5000)
-
-# You can add your Streamlit UI components here if needed
+# Streamlit content
 st.title("Refugee Resource Finder")
-st.write("Welcome to the Refugee Resource Finder platform!")
 
-# Streamlit command to run the Flask app in the background
-if __name__ == '__main__':
-    run_flask_app()
+# Button to start the Flask app in the background
+if st.button("Start Flask App"):
+    # Serve Flask app using Waitress
+    serve(app, host="0.0.0.0", port=8080)
+    st.success("Flask app is running on port 8080!")
