@@ -2,6 +2,7 @@ from flask import Blueprint, jsonify
 
 bp = Blueprint('main', __name__)
 
+# Example route that returns a list of resources
 @bp.route('/resources', methods=['GET'])
 def get_resources():
     resources = [
