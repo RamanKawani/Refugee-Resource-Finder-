@@ -1,8 +1,5 @@
 import psutil
-from flask import Flask
-
-# Initialize Flask app
-app = Flask(__name__)
+import streamlit as st
 
 # Function to kill the process using the specified port
 def kill_process_using_port(port):
@@ -13,20 +10,27 @@ def kill_process_using_port(port):
                 for conn in proc.connections(kind='inet'):
                     if conn.laddr.port == port:
                         proc.terminate()  # Terminate the process using the port
-                        print(f"Terminated process {proc.info['pid']} using port {port}")
+                        st.write(f"Terminated process {proc.info['pid']} using port {port}")
                         return
             except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
                 continue
     except Exception as e:
-        print(f"Error: {e}")
+        st.write(f"Error: {e}")
 
-# Define a simple route to check the app is running
-@app.route('/')
-def home():
-    return "Flask app is running!"
+# Streamlit app logic
+def main():
+    # Show a title
+    st.title('Streamlit Port Killer')
 
-# Main logic to run the application
+    # Port to check and kill processes
+    port = 5000
+
+    # Try to kill the process using the port
+    kill_process_using_port(port)
+
+    # Display a message that the app is running
+    st.write(f"Streamlit app is running on port {port}")
+
+# Run the Streamlit app
 if __name__ == "__main__":
-    port = 5000  # The port to check and use for the Flask app
-    kill_process_using_port(port)  # Try to kill the process using the port
-    app.run(port=port)  # Start the Flask app on the specified port
+    main()
